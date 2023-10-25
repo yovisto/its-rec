@@ -1,0 +1,278 @@
+<html>
+ <head>
+<script src="jquery-3.7.1.min.js"></script>
+
+<style type="text/css">
+
+.clickable {
+
+	color: blue;
+	cursor: pointer;
+}
+
+.popup {
+  position: absolute;
+  display: inline-block;
+  background-color: #222;
+}
+
+/* The actual popup */
+.popup .popuptext {
+  visibility: hidden;
+  width: 1000px;
+  height: fit-content;
+  background-color: #555;
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 8px;
+  position: absolute;
+  z-index: 1;
+}
+
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;} 
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+.overlay.show{
+    background-color:transparent;
+    visibility: hidden;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:block;
+}
+
+.overlay.show{
+    background-color:transparent;
+    visibility: visible;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    display:block;
+}
+
+#stage {
+
+	padding: 10px;
+}
+
+</style>
+</head>
+
+
+<body>
+	
+<h1>Hello ITsJOINTLY Recommender</h1>
+
+<script type="text/javascript">
+	
+$("h1").css('color', 'red');
+
+// load resources
+
+// only descripion
+//var query1 = "https://edu.yovisto.com/sparql?default-graph-uri=&query=select+distinct+*+where+%7B%0D%0A%3Fs+%3Chttps%3A%2F%2Fschema.org%2Fdescription%3E+%3Flab+.%0D%0Afilter+regex%28%3Flab%2C+%22XXNEEDLEXX%22%2C+%22i%22%29%0D%0Aoptional+%7B%3Fs+%3Chttps%3A%2F%2Fschema.org%2Fname%3E+%3Ftitle+.%7D%0D%0Aoptional+%7B%3Fs+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Ftitle%3E+%3Ftitle+.%7D%0D%0A%7D+LIMIT+5&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on&run=+Run+Query+";
+
+// description and labels
+var query1 = "https://edu.yovisto.com/sparql?default-graph-uri=&query=select+distinct+*+where+%7B%0D%0A%7B%0D%0A%3Fs+%3Chttps%3A%2F%2Fschema.org%2Fdescription%3E+%3Flab+.%0D%0Afilter+regex%28%3Flab%2C+%22XXNEEDLEXX%22%2C+%22i%22%29%0D%0Aoptional+%7B%3Fs+%3Chttps%3A%2F%2Fschema.org%2Fname%3E+%3Ftitle+.%7D%0D%0Aoptional+%7B%3Fs+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Ftitle%3E+%3Ftitle+.%7D%0D%0A%7D%0D%0Aunion%0D%0A%7B%0D%0A%3Fs+%3Chttps%3A%2F%2Fschema.org%2Fdescription%3E+%3Flab+.%0D%0Aoptional+%7B%3Fs+%3Chttps%3A%2F%2Fschema.org%2Fname%3E+%3Ftitle+.%7D%0D%0Aoptional+%7B%3Fs+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Ftitle%3E+%3Ftitle+.%7D%0D%0Afilter+regex%28%3Ftitle%2C+%22XXNEEDLEXX%22%2C+%22i%22%29%0D%0A%7D%0D%0A%0D%0A%7D+LIMIT+10&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on&run=+Run+Query+"
+
+var query1curriculum = "https://edu.yovisto.com/sparql?default-graph-uri=&query=select+distinct+*+where+%7B%0D%0A%3Fs+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23prefLabel%3E+%3Flab+.%0D%0A%3Fs+a+%3Chttps%3A%2F%2Fw3id.org%2Fdini%2Fdini-ns%2FCurriculumItem%3E+.%0D%0A%3Fs+%3Chttps%3A%2F%2Fw3id.org%2Fcurriculum%2FhasAnnotationTarget%3E+%3Ftarget+.%0D%0A%0D%0Afilter+regex%28%3Flab%2C+%22XXNEEDLEXX%22%2C+%22i%22%29%0D%0Aoptional+%7B%3Fs+%3Chttps%3A%2F%2Fschema.org%2Fname%3E+%3Ftitle+.%7D%0D%0Aoptional+%7B%3Fs+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Ftitle%3E+%3Ftitle+.%7D%0D%0A%7D+LIMIT+10&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on&run=+Run+Query+"
+
+
+// load recommendations
+var query2= "https://edu.yovisto.com/sparql?default-graph-uri=&query=select+distinct+%3Fdoc+count%28distinct+%3Fcat%29+as+%3Fcnt+%3FfinalTitle+where+%7B%0D%0A%3CXXNEEDLEXX%3E+%3Chttps%3A%2F%2Fw3id.org%2Fcurriculum%2FhasAnnotationTarget%3E+%3Fctx+.%0D%0A%3Ftarget+%3Chttp%3A%2F%2Fpersistence.uni-leipzig.org%2Fnlp2rdf%2Fontologies%2Fnif-core%23referenceContext%3E+%3Fctx+.%0D%0A%3Ftarget+%3Chttp%3A%2F%2Fwww.w3.org%2F2005%2F11%2Fits%2Frdf%23taAnnotatorsRef%3E+%3Chttp%3A%2F%2Fwww.dbpedia-spotlight.com%3E+.%0D%0A%3Ftarget+%3Chttp%3A%2F%2Fwww.w3.org%2F2005%2F11%2Fits%2Frdf%23taIdentRef%3E+%3Fe+.%0D%0A%3Fe+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Fsubject%3E+%3Fcat+.%0D%0A%3Fe2+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Fsubject%3E+%3Fcat+.%0D%0A%3Ftarget2+%3Chttp%3A%2F%2Fwww.w3.org%2F2005%2F11%2Fits%2Frdf%23taIdentRef%3E+%3Fe2+.%0D%0A%3Ftarget2+%3Chttp%3A%2F%2Fpersistence.uni-leipzig.org%2Fnlp2rdf%2Fontologies%2Fnif-core%23referenceContext%3E+%3Fctx2+.%0D%0A%3Fdoc+%3Chttps%3A%2F%2Fw3id.org%2Fcurriculum%2FhasAnnotationTarget%3E+%3Fctx2+.%0D%0Aoptional%7B%3Fdoc+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Ftitle%3E+%3Ftitle2+.%7D%0D%0Aoptional%7B%3Fdoc+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23altLabel%3E+%3Ftitle3+.%7D%0D%0Aoptional%7B%3Fdoc+%3Chttps%3A%2F%2Fschema.org%2Fname%3E+%3Ftitle4+.%7D%0D%0Abind%28+coalesce%28coalesce%28%3Ftitle2%2C%3Ftitle3%29%2C+%3Ftitle4+%29+as+%3FfinalTitle%29%0D%0A%7D+group+by+%3Fdoc+%3FfinalTitle+order+by+desc%28%3Fcnt+%29+limit+10%0D%0A&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on&run=+Run+Query+"
+
+// load reason for recommendation
+var query3 = "https://edu.yovisto.com/sparql?default-graph-uri=&query=select+distinct+%3Fe+as+%3Fdoc+%3Fcat+%3Fe2+as+%3Frecommendation+where+%7B%0D%0A%3CXXNEEDLEXX%3E+%3Chttps%3A%2F%2Fw3id.org%2Fcurriculum%2FhasAnnotationTarget%3E+%3Fctx+.%0D%0A%3Ftarget+%3Chttp%3A%2F%2Fpersistence.uni-leipzig.org%2Fnlp2rdf%2Fontologies%2Fnif-core%23referenceContext%3E+%3Fctx+.%0D%0A%3Ftarget+%3Chttp%3A%2F%2Fwww.w3.org%2F2005%2F11%2Fits%2Frdf%23taAnnotatorsRef%3E+%3Chttp%3A%2F%2Fwww.dbpedia-spotlight.com%3E+.%0D%0A%3Ftarget+%3Chttp%3A%2F%2Fwww.w3.org%2F2005%2F11%2Fits%2Frdf%23taIdentRef%3E+%3Fe+.%0D%0A%3Fe+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Fsubject%3E+%3Fcat+.%0D%0A%3Fe2+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2Fsubject%3E+%3Fcat+.%0D%0A%3Ftarget2+%3Chttp%3A%2F%2Fwww.w3.org%2F2005%2F11%2Fits%2Frdf%23taIdentRef%3E+%3Fe2+.%0D%0A%3Ftarget2+%3Chttp%3A%2F%2Fpersistence.uni-leipzig.org%2Fnlp2rdf%2Fontologies%2Fnif-core%23referenceContext%3E+%3Fctx2+.%0D%0A%3CYYNEEDLEYY%3E+%3Chttps%3A%2F%2Fw3id.org%2Fcurriculum%2FhasAnnotationTarget%3E+%3Fctx2+.%0D%0A%7D+%0D%0A&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on&run=+Run+Query+"
+
+function show(e){
+
+  url = event.currentTarget.attributes["data-url"].value;
+  rec = event.currentTarget.attributes["data-rec"].value;
+
+  $("#myPopup").html("Loading ... ");
+  $.getJSON(query3.replaceAll("XXNEEDLEXX",url).replaceAll("YYNEEDLEYY",rec), function(jd) {
+                var obj = jd.results.bindings;
+
+  				$("#myPopup").html("<p>Dieses Dokument wird empfohlen, weil es ähnliche Entitäten und Kategorien enthält. <p>");
+
+  				var direct = new Set();
+  				var indirect = new Set();
+  				var categories = new Set();
+
+				for (var key in obj){
+    			  var value = obj[key];
+    			  var doc = value.doc.value.replace("http://de.dbpedia.org/resource/", "") ;
+    			  var cat = value.cat.value.replace("http://de.dbpedia.org/resource/", "") ;
+    			  var rec = value.recommendation.value.replace("http://de.dbpedia.org/resource/", "") ;
+
+    			  if (doc==rec){
+    			  	direct.add(doc);
+    			  }else{
+    			  	indirect.add([doc, cat, rec]);
+    			  }
+    			  categories.add(cat);
+
+//    			  $("#myPopup").append(doc + " --> " + rec +  "  via (" + cat + ") <br>\n");
+    			}
+
+				$("#myPopup").append("<p><b>Direkte Gemeinsamkeiten:</b><p>")
+    			for (var item of direct){
+    				$("#myPopup").append(item +"<br>\n");
+    			}
+
+				$("#myPopup").append("<p><b>Gemeinsame Kategorien:</b><p>")
+    			for (var item of categories){
+    				$("#myPopup").append(item +"<br>\n");
+    			}
+
+    			$("#myPopup").append("<p><b>Indirekte Verbindungen:</b><p>")
+    			for (var item of indirect){
+    				$("#myPopup").append(item[0] + " u. " + item[2] +  " (" + item[1] + ")<br>\n");
+    			}
+
+    			//console.log(direct);
+    			//console.log(categories);
+    			//console.log(indirect);
+	});
+  
+
+  console.log("show " + rec + " " + url);
+  var popup = document.getElementById("myPopup");
+  popup.classList.add("show");
+  var overlay = document.getElementById("overlay");
+  overlay.classList.add("show");
+
+
+  var bodyScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  
+  console.log(bodyScrollTop, e.clientX, e.clientY);
+  //var el = $("#popup");
+  //popup.style.position = "absolute";
+  popup.style.left= (e.clientX-250) + "px";
+  popup.style.top= (e.clientY + bodyScrollTop - 55) + "px";
+
+}
+
+function hide(){
+  console.log("hide");
+  var popup = document.getElementById("myPopup");
+  popup.classList.remove("show");
+  var overlay = document.getElementById("overlay");
+  overlay.classList.remove("show");
+}
+
+function getWloLink(url){
+
+    if (url.startsWith("https://edu.yovisto.com/resource/wlo/")){
+    	var l = url.replace("https://edu.yovisto.com/resource/wlo/", "https://redaktion.openeduhub.net/edu-sharing/components/render/");
+    	return " [<a target='_blank' href='" + l + "'>WLO</a>]";
+    }
+
+	return "";
+}
+
+function removeHtml(passHtmlBlock)
+{
+  
+  return passHtmlBlock.replace(/<[^>]*(>|$)|&nbsp;|&zwnj;|&raquo;|&laquo;|&gt;/g, ' ');
+}
+
+function search(){
+
+	   var search = document.getElementById("query").value;
+
+	   console.log("Searching " + search );
+			   $('#stage').html("Searching ...");
+			   var q = query1;
+			   if (document.getElementById('curriculum').checked){
+			   		console.log("curriculum activated");
+			   		q = query1curriculum;
+			   }
+
+               $.getJSON(q.replaceAll("XXNEEDLEXX", search), function(jd) {
+ 				$('#stage').html("");
+                var obj = jd.results.bindings;
+				for (var key in obj){
+    			  var value = obj[key];
+    			  var desc = removeHtml(value.lab.value);
+    			  var len = 400;
+    			  var trimmedDesc = desc.length > len ? desc.substring(0, len - 3) + "..." : desc;
+    			  if (document.getElementById('curriculum').checked){
+    			  	trimmedDesc="";
+    			  }
+
+    			  var wlolink = getWloLink(value.s.value);
+    			  var title = value.title!=null?value.title.value:desc;
+
+                  $('#stage').append('<div id="head_'+ key +'" style="padding-bottom:2em;"><a  class="clickable" id="link_'+ key +'" data-url="'+ value.s.value + '"><b>'+ title +'</b></a> [<a target="_blank" href="' + value.s.value + '">KG</a>] ' + wlolink + ' <p>' + trimmedDesc + '</p> <div id="content_' + key + '"></div></div>\n');
+              
+                  $("#link_" + key).click(function(event){
+                  	url = event.currentTarget.attributes["data-url"].value;
+                  	console.log("retrieving recommendations for " + url);
+                  	id = event.currentTarget.attributes["id"].value.replace('link','content');
+                  	$("#" + id).html("Empfehlungen ... ");
+
+                  	$.getJSON(query2.replaceAll("XXNEEDLEXX", url), function(jd2, s, r) {
+                  		var obj = jd2.results.bindings;
+                  		if (obj.length==0){
+                  			$("#" + id).append("Es konnte nichts gefunden werden.");
+                  		}
+						for (var key2 in obj){							
+    			  			var value = obj[key2];
+    			  			console.log(id);
+    			  			rec = value.doc.value;
+    			  			if (rec!=url){
+    			  				$("#" + id).append("<div><a class='clickable' id='rec_" + key+ "_"+ key2 + "' onclick='show(event)' data-url='"+url+"' data-rec='"+rec+"'>" + value.cnt.value + ": " + value.finalTitle.value + "</a> [<a target='_blank' href='" + rec + "''>KG</a>] " + getWloLink(rec) + "</div>\n");
+    			  			}
+    			  		}
+
+                  	});
+
+                  });
+
+
+                  };
+               });
+            //});
+               
+//});
+           }
+
+</script>
+
+<input type="text" id="query" >
+<input type="button" id="thebutton" value="Search" onclick="search()" /><br>
+<input type="checkbox" id="curriculum">curriculum</input> 
+
+<div class="popup" id="pop">
+  <span class="popuptext" id="myPopup">Loading ... </span>
+</div>
+<div id="overlay" class="overlay" onclick="hide()"></div>
+<div id="stage" style="background-color:#fff;">
+</div>
+
+
+
+</body>
+
+</html>
