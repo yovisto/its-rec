@@ -144,7 +144,7 @@
 					} else {
 						indirect.add([doc, cat, rec]);
 					}
-					categories.add(cat);					
+					categories.add(cat);
 				}
 
 				$("#myPopup").append("<p><b>Direkte Gemeinsamkeiten:</b><p>")
@@ -160,14 +160,13 @@
 				$("#myPopup").append("<p><b>Indirekte Verbindungen:</b><p>")
 				for (var item of indirect) {
 					$("#myPopup").append(item[0] + " u. " + item[2] + " (" + item[1] + ")<br>\n");
-				}			
+				}
 
 				verified_words_list = verified_words.split(',').filter(Boolean);
-				if (verified_words_list.length > 0)
-				{
+				if (verified_words_list.length > 0) {
 					$("#myPopup").append("<p><b>Verifizierte überlappende Konzepte:</b><p>")
-					$("#myPopup").append(verified_words_list.join(', ') + "<br>\n");	
-				}				
+					$("#myPopup").append(verified_words_list.join(', ') + "<br>\n");
+				}
 			});
 
 			console.log("show " + rec + " " + url);
@@ -176,7 +175,7 @@
 			var overlay = document.getElementById("overlay");
 			overlay.classList.add("show");
 			var bodyScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-			console.log(bodyScrollTop, e.clientX, e.clientY);			
+			console.log(bodyScrollTop, e.clientX, e.clientY);
 			popup.style.left = "50px";
 			popup.style.top = (e.clientY + bodyScrollTop - 75) + "px";
 
@@ -245,19 +244,19 @@
 							var obj = jd2.results.bindings;
 							if (obj.length == 0) {
 								$("#" + id).append("Es konnte nichts gefunden werden.");
-							}														
+							}
 							for (var key2 in obj) {
 								var value = obj[key2];
 								console.log(id);
 								rec = value.doc.value;
 								if (rec != url) {
 									results.push({
-  										id: key + "_" + key2,
-  										rec: rec,  							
+										id: key + "_" + key2,
+										rec: rec,
 										cnt: value.cnt.value,
 										title: value.finalTitle ? value.finalTitle.value : rec,
 										verified_words: []
-									});									
+									});
 								}
 							}
 
@@ -271,29 +270,27 @@
 									if (ext_objs.length > 0) {
 										ext_objs[0].verified_words.push(value3.surface.value)
 									}
-									else 
-									{
+									else {
 										results.push({
-  										id: key + "_" + key3,
-  										rec: value3.coref.value,  							
-										cnt: value3.cnt.value,
-										title: value3.name2.value,
-										verified_words: [value3.surface.value]
-									});
-									}									
+											id: key + "_" + key3,
+											rec: value3.coref.value,
+											cnt: value3.cnt.value,
+											title: value3.name2.value,
+											verified_words: [value3.surface.value]
+										});
+									}
 								}
-								
+
 								results.forEach(result => {
-									if (result.verified_words.length > result.cnt)
-									{
+									if (result.verified_words.length > result.cnt) {
 										result.cnt = result.verified_words.length
 									}
 								});
 
-								
-								results.forEach(result =>	{							
-									verified_words = result.verified_words.join(',');	
-									$("#" + id).append("<div><a class='clickable' id='rec_" + result.id + "' onclick='show(event)' data-url='" + url +  "' data-words='" + verified_words + "' data-rec='" + result.rec + "'>" + result.cnt + ": " + result.title + "</a> [<a target='_blank' href='" + result.rec + "''>KG</a>] " + getWloLink(result.rec) + "</div>\n")
+
+								results.forEach(result => {
+									verified_words = result.verified_words.join(',');
+									$("#" + id).append("<div><a class='clickable' id='rec_" + result.id + "' onclick='show(event)' data-url='" + url + "' data-words='" + verified_words + "' data-rec='" + result.rec + "'>" + result.cnt + ": " + result.title + "</a> [<a target='_blank' href='" + result.rec + "''>KG</a>] " + getWloLink(result.rec) + "</div>\n")
 								});
 
 							});
