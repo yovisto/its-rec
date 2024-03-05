@@ -1,5 +1,37 @@
 <html>
+<link rel="stylesheet" href="https://unpkg.com/chota@latest">
+<style>
+    :root {
+  --bg-color: #ffffff;
+  --bg-secondary-color: #f3f3f6;
+  --color-primary: #1e73be;
+  --color-lightGrey: #d2d6dd;
+  --color-grey: #747681;
+  --color-darkGrey: #3f4144;
+  --color-error: #d43939;
+  --color-success: #28bd14;
+  --grid-maxWidth: 120rem;
+  --grid-gutter: 2rem;
+  --font-size: 1.6rem;
+  --font-color: #333333;
+  --font-family-sans: sans-serif;
+  --font-family-mono: monaco, "Consolas", "Lucida Console", monospace;
+}
+body {
+    padding: 50px 50px 150px 50px;
+}
 
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: lightgray;
+  color: white;
+  text-align: center;
+}
+
+</style>
 <head>
 	<script src="jquery-3.7.1.min.js"></script>
 
@@ -313,6 +345,13 @@
 	<div id="overlay" class="overlay" onclick="hide()"></div>
 	<div id="stage" style="background-color:#fff;">
 	</div>
+
+
+<div class="footer">
+  <p>created with <a href="https://www.wikidata.org/wiki/Q316">♥</a> for <a href="https://its.jointly.info/">ITsJOINTLY</a> by <a href="https://yovisto.com">yovisto.com</a> </p>
+  <img src="https://its.jointly.info/wp-content/uploads/sites/32/2023/09/logos_horizontal-3.svg"><br>
+  <a href="https://yovisto.com/de/impressum/">Imprint</a>
+</div>
 </body>
 
 </html>
