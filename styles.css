@@ -1,0 +1,79 @@
+.clickable {
+
+    color: blue;
+    cursor: pointer;
+}
+
+.popup {
+    position: absolute;
+    display: inline-block;
+    background-color: #222;
+}
+
+/* The actual popup */
+.popup .popuptext {
+    visibility: hidden;
+    width: 1000px;
+    height: fit-content;
+    background-color: #555;
+    color: #fff;
+    border-radius: 6px;
+    padding: 8px 8px;
+    position: absolute;
+    z-index: 1;
+}
+
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.overlay.show {
+    background-color: transparent;
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+}
+
+.overlay.show {
+    background-color: transparent;
+    visibility: visible;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+}
+
+#stage {
+    padding: 10px;
+}
