@@ -77,3 +77,30 @@
 #stage {
     padding: 10px;
 }
+
+.accordion {
+    width: 80%;        
+    text-align: left;
+    padding-bottom:1em;
+}
+.accordion-item {
+    border: 1px solid #ccc;
+    margin: 5px 0;
+}
+.accordion-header {
+    background-color: #f1f1f1;
+    padding: 2px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+}
+.accordion-content {
+    display: none;
+    padding: 5px;
+    background-color: white;
+}
+.accordion-header span {
+    font-size: 20px;
+}
