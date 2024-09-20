@@ -150,15 +150,19 @@ function search(event) {
             $.getJSON(q, function (jd2, s, r) {                    
                     var obj = jd2.results.bindings;
                     var results = {};
-                    for (var key2 in obj) {
-                        if (obj[key2].itemLabel.value in results) {
+                    const entities = new Set();
+                    const people = new Set();
+                    for (var key2 in obj) {                        
+                        if (obj[key2].itemLabel.value in results) {                            
                             if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value)) && (!BLACK_LISTS.STR.includes(obj[key2].str.value))) {
-                                results[obj[key2].itemLabel.value].propLabel.add(obj[key2].propLabel.value);										
+                                results[obj[key2].itemLabel.value].propLabel.add(obj[key2].propLabel.value);										                                
                             }									
                             results[obj[key2].itemLabel.value].cnt += 1;
                         }
                         else {
                             if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value)) && (!BLACK_LISTS.STR.includes(obj[key2].str.value))) {
+                                people.add('<' + obj[key2].item.value + '>');
+                                entities.add('<' + obj[key2].wdc.value + '>');                        
                                 results[obj[key2].itemLabel.value] = {
                                     propLabel: new Set([obj[key2].propLabel.value]),
                                     image: obj[key2].image.value,
@@ -184,8 +188,10 @@ function search(event) {
                         $('#person_subsec' + key).append('<a href="' + results[key2].item + '" target="_blank"><img src=' + results[key2].image + ' + title="' + title + '" height=100 width=75></a>')								
                     }
                     if (Object.keys(results).length > 0) {
-                        const views_html = PERSON_VIEWS.replace('__ID__', key)
-                        $('#person_subsec' + key).append(views_html)
+                        const all_entities = Array.from(people).concat(Array.from(entities));
+                        const map_query = QUERIES.QUERY_MAP.replaceAll('XXNEEDLEXX', all_entities.join(' '));
+                        const views_html = PERSON_VIEWS.replaceAll('__ID__', key).replace('__MAPHREF__', map_query);
+                        $('#person_subsec' + key).append(views_html);
                     }
                                                             
             });            
@@ -197,8 +203,7 @@ function search(event) {
             $.getJSON(QUERIES.QUERY_2.replaceAll("XXNEEDLEXX", url), function (jd2, s, r) {
                 var obj = jd2.results.bindings;                
                 for (var key2 in obj) {
-                    var value = obj[key2];
-                    //console.log(id);
+                    var value = obj[key2];                    
                     var rec = value.doc.value;
                     if (rec != url) {
                         results.push({
