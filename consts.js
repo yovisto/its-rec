@@ -32,7 +32,7 @@ export const SUB_SECTION = `
 <div class="accordion">
         <div class="accordion-item">
             <div id="rec_header__ID__" class="accordion-header">
-                Emphelungen <span class="symbol">+</span>
+                Empfehlungen <span class="symbol">+</span>
             </div>
             <div id="rec_subsec__ID__" class="accordion-content">                
             </div>

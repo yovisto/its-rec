@@ -106,6 +106,14 @@ function addAccordionEventHandlers(id) {
   document.getElementById('person_header' + id).addEventListener('click', handleHeader);  
 }
 
+function createGUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 function search(event) {
     var search_val = document.getElementById("query").value;
     var input_url = event.currentTarget.attributes["data-url"];
@@ -250,10 +258,11 @@ function search(event) {
                         $("#rec_subsec" + key).html("");
                     };
                     results.forEach(result => {
-                        var verified_words = result.verified_words.join(',');                            
-                        $("#rec_subsec" + key).append("<div><a data-url='" + result.rec + "' id='rec_" + result.rec + "' class='clickable'>" + result.title + "</a> [<a style='cursor: pointer;' id='rec_" + result.id  + "' data-url='" + url + "' data-words='" + verified_words + "' data-rec='" + result.rec + "' title='" + TOOLTIPS.WARUM + "'>Warum?</a>] " + "</a> [<a target='_blank' href='" + result.rec + "' title='" + TOOLTIPS.KG + "'>KG</a>] " + getWloLink(result.rec) + "</div>\n")
+                        const verified_words = result.verified_words.join(',');                           
+                        const guid =  createGUID()
+                        $("#rec_subsec" + key).append("<div><a data-url='" + result.rec + "' id='" + guid + "' class='clickable'>" + result.title + "</a> [<a style='cursor: pointer;' id='rec_" + result.id  + "' data-url='" + url + "' data-words='" + verified_words + "' data-rec='" + result.rec + "' title='" + TOOLTIPS.WARUM + "'>Warum?</a>] " + "</a> [<a target='_blank' href='" + result.rec + "' title='" + TOOLTIPS.KG + "'>KG</a>] " + getWloLink(result.rec) + "</div>\n")
                         document.getElementById('rec_' + result.id).addEventListener('click', show);    
-                        document.getElementById('rec_' + result.rec).addEventListener('click', search);   
+                        document.getElementById(guid).addEventListener('click', search);   
                     });
 
                 });
