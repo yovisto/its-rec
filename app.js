@@ -159,7 +159,7 @@ function search(event) {
                     var obj = jd2.results.bindings;
                     var results = {};
                     const entities = new Set();
-                    const people = new Set();
+                    const people = new Set();                    
                     for (var key2 in obj) {                        
                         if (obj[key2].itemLabel.value in results) {                            
                             if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value)) && (!BLACK_LISTS.STR.includes(obj[key2].str.value))) {
@@ -171,6 +171,15 @@ function search(event) {
                             if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value)) && (!BLACK_LISTS.STR.includes(obj[key2].str.value))) {
                                 people.add('<' + obj[key2].item.value + '>');
                                 entities.add('<' + obj[key2].wdc.value + '>');                        
+                                if (obj[key2].wdc_type && obj[key2].wdc_type.value == "http://www.wikidata.org/entity/Q5") {
+                                    results[obj[key2].wdc_description.value] = {
+                                        propLabel: new Set(['description']),
+                                        item: obj[key2].wdc.value,
+                                        image : obj[key2].wdc_image ? obj[key2].wdc_image.value : '',
+                                        str : obj[key2].wdc_label.value,                                        
+                                        cnt: 100
+                                    }
+                                }
                                 results[obj[key2].itemLabel.value] = {
                                     propLabel: new Set([obj[key2].propLabel.value]),
                                     image: obj[key2].image.value,
@@ -191,6 +200,7 @@ function search(event) {
                     else {
                         $('#person_subsec' + key).html("");
                     }
+
                     for (var key2 in results) {
                         const title = results[key2].str + ': ' + key2 + ' [' + [...results[key2].propLabel].join(', ') + ']'
                         $('#person_subsec' + key).append('<a href="' + results[key2].item + '" target="_blank"><img src=' + results[key2].image + ' + title="' + title + '" height=100 width=75></a>')								
