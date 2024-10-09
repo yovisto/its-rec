@@ -104,3 +104,7 @@
 .accordion-header span {
     font-size: 20px;
 }
+
+.tooltip-img {    
+    position: relative;
+}

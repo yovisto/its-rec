@@ -1,5 +1,6 @@
 import { BLACK_LISTS, PERSON_VIEWS, QUERIES, SUB_SECTION, TOOLTIPS } from './consts.js';
 
+
 function show(event) {
 
     var url = event.currentTarget.attributes["data-url"].value;
@@ -114,6 +115,18 @@ function createGUID() {
     });
 }
 
+function showTooltip(event) {
+    $("#myPopup").html("");
+    const tooltipText = event.target.getAttribute('data-tooltip');
+    $("#myPopup").append(tooltipText);
+    var popup = document.getElementById("myPopup");
+    popup.classList.add("show");
+    var overlay = document.getElementById("overlay");
+    overlay.classList.add("show");        
+    popup.style.left = `${event.pageX - 45}px`;
+    popup.style.top = `${event.pageY - 180}px`;
+}
+
 function search(event) {
     var search_val = document.getElementById("query").value;
     var input_url = event.currentTarget.attributes["data-url"];
@@ -158,6 +171,7 @@ function search(event) {
             $.getJSON(q, function (jd2, s, r) {                    
                     var obj = jd2.results.bindings;
                     var results = {};
+                    var direct_results = [];
                     const entities = new Set();
                     const people = new Set();                    
                     for (var key2 in obj) {                        
@@ -172,19 +186,27 @@ function search(event) {
                                 people.add('<' + obj[key2].item.value + '>');
                                 entities.add('<' + obj[key2].wdc.value + '>');                        
                                 if (obj[key2].wdc_type && obj[key2].wdc_type.value == "http://www.wikidata.org/entity/Q5") {
-                                    results[obj[key2].wdc_description.value] = {
-                                        propLabel: new Set(['description']),
-                                        item: obj[key2].wdc.value,
-                                        image : obj[key2].wdc_image ? obj[key2].wdc_image.value : '',
-                                        str : obj[key2].wdc_label.value,                                        
-                                        cnt: 100
-                                    }
+                                    const index = direct_results.findIndex(entry => entry.item === obj[key2].wdc.value); 
+                                    if (index == -1) {
+                                        direct_results.push({
+                                            propLabel: new Set(['description']),
+                                            item: obj[key2].wdc.value,
+                                            image : obj[key2].wdc_image ? obj[key2].wdc_image.value : '',
+                                            str: obj[key2].str.value,
+                                            subj_title: obj[key2].wdc_label.value,
+                                            obj_title: obj[key2].wdc_description.value,
+                                            cnt: 100
+                                        });
+                                    }                                    
                                 }
                                 results[obj[key2].itemLabel.value] = {
                                     propLabel: new Set([obj[key2].propLabel.value]),
                                     image: obj[key2].image.value,
                                     item: obj[key2].item.value,
+                                    item_description: obj[key2].item_description.value,
                                     str: obj[key2].str.value,
+                                    subj_title: obj[key2].wdc_label.value,
+                                    obj_title: obj[key2].itemLabel.value,
                                     cnt: 0
                                 }
                             }                            
@@ -201,10 +223,32 @@ function search(event) {
                         $('#person_subsec' + key).html("");
                     }
 
-                    for (var key2 in results) {
-                        const title = results[key2].str + ': ' + key2 + ' [' + [...results[key2].propLabel].join(', ') + ']'
-                        $('#person_subsec' + key).append('<a href="' + results[key2].item + '" target="_blank"><img src=' + results[key2].image + ' + title="' + title + '" height=100 width=75></a>')								
+                    direct_results
+                    for (const key2 in results) {
+                        var title = results[key2].subj_title + ': ' + results[key2].obj_title + ' [' + [...results[key2].propLabel].join(', ') + ']'
+                        const index = direct_results.findIndex(item => item.subj_title === results[key2].obj_title); 
+                        if (index !== -1) { 
+                            title = direct_results[index].subj_title + ': ' + direct_results[index].obj_title + ' [' + [...direct_results[index].propLabel].join(', ') + ']<br>' + title;                            
+                            $('#person_subsec' + key).prepend('<a href="' + results[key2].item + '" target="_blank"><img class="tooltip-img" src=' + results[key2].image + ' + data-tooltip="' + title + '" height=100 width=75></a>');								
+                            direct_results.splice(index, 1);
+                        } else {
+                            const title_2 = results[key2].obj_title + ': ' + results[key2].item_description + ' [description]'
+                            title = title_2 + '<br>' + title
+                            $('#person_subsec' + key).append('<a href="' + results[key2].item + '" target="_blank"><img class="tooltip-img" src=' + results[key2].image + ' + data-tooltip="' + title + '" height=100 width=75></a>');								                            
+                        }                        
                     }
+
+                    direct_results.forEach(result => {
+                        const direct_title = result.subj_title + ': ' + result.obj_title + ' [' + [...result.propLabel].join(', ') + ']'
+                        $('#person_subsec' + key).prepend('<a href="' + result.item + '" target="_blank"><img class="tooltip-img" src=' + result.image + ' + data-tooltip="' + direct_title + '" height=100 width=75></a>');								
+                    });                    
+
+                    const images = document.querySelectorAll('.tooltip-img');
+                    images.forEach(image => {
+                        image.addEventListener('mouseenter', showTooltip);                        
+                        image.addEventListener('mouseleave', hide);
+                    });
+
                     if (Object.keys(results).length > 0) {
                         const all_entities = Array.from(people).concat(Array.from(entities));
                         const map_query = QUERIES.QUERY_MAP.replaceAll('XXNEEDLEXX', all_entities.join(' '));
