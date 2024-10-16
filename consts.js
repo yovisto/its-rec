@@ -15,8 +15,8 @@ export const QUERIES = {
 };
 
 export const BLACK_LISTS = {
-    STR: ['Youtube', 'YouTube', 'Sony', 'Creative Commons', 'LED', 'Facebook', 'facebook.com', 'Twitter', 'Instagram', 'CC-BY-SA', 'Youtuber', 'YouTuber', 'Website', 'Kanal', 'Pinterest', 'Snapchat', 'vlogbrothers', 'hank green', 'Hank Green', 'Wikipedia', 'wikipedia', 'youtube.com', 'Wikimedia Commons', 'Reddit', 'instagram.com', 'CC'],
-    REL: ['Leiter der Regierung oder Verwaltung', 'Staatsoberhaupt', 'Darsteller', 'Beispielelement', 'verschieden von']		
+    STR: ['youtube', 'sony', 'creative commons', 'led', 'facebook', 'facebook.com', 'twitter', 'instagram', 'cc-by-sa', 'youtuber', 'website', 'kanal', 'pinterest', 'snapchat', 'vlogbrothers', 'hank green', 'wikipedia', 'youtube.com', 'wikimedia commons', 'reddit', 'instagram.com', 'cc', 'x', 'zdf', 'tweet', 'bayerischer rundfunk'],
+    REL: ['leiter der regierung oder verwaltung', 'staatsoberhaupt', 'darsteller', 'beispielelement', 'verschieden von']		
 }
 
 export const TOOLTIPS = {

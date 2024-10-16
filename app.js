@@ -182,28 +182,34 @@ function search(event) {
                     const people = new Set();                    
                     for (var key2 in obj) {                        
                         if (obj[key2].itemLabel.value in results) {                            
-                            if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value)) && (!BLACK_LISTS.STR.includes(obj[key2].str.value))) {
-                                results[obj[key2].itemLabel.value].propLabel.add(obj[key2].propLabel.value);										                                
+                            if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value.toLowerCase())) && 
+                                (!BLACK_LISTS.STR.includes(obj[key2].str.value.toLowerCase())) &&
+                                (!BLACK_LISTS.STR.includes(obj[key2].wdc_label.value.toLowerCase())) && 
+                                (!BLACK_LISTS.STR.includes(obj[key2].itemLabel.value.toLowerCase()))) {
+                                    results[obj[key2].itemLabel.value].propLabel.add(obj[key2].propLabel.value);										                                
                             }									
                             results[obj[key2].itemLabel.value].cnt += 1;
                         }
                         else {
-                            if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value)) && (!BLACK_LISTS.STR.includes(obj[key2].str.value))) {
-                                people.add('<' + obj[key2].item.value + '>');
-                                entities.add('<' + obj[key2].wdc.value + '>');                        
-                                if (obj[key2].wdc_type && obj[key2].wdc_type.value == "http://www.wikidata.org/entity/Q5") {
-                                    const index = direct_results.findIndex(entry => entry.item === obj[key2].wdc.value); 
-                                    if (index == -1) {
-                                        direct_results.push({
-                                            propLabel: new Set(['description']),
-                                            item: obj[key2].wdc.value,
-                                            image : obj[key2].wdc_image ? obj[key2].wdc_image.value : '',
-                                            str: obj[key2].str.value,
-                                            subj_title: obj[key2].wdc_label.value,
-                                            obj_title: obj[key2].wdc_description.value,
-                                            cnt: 100
-                                        });
-                                    }                                    
+                            if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value.toLowerCase())) && 
+                                (!BLACK_LISTS.STR.includes(obj[key2].str.value.toLowerCase())) &&
+                                (!BLACK_LISTS.STR.includes(obj[key2].wdc_label.value.toLowerCase())) && 
+                                (!BLACK_LISTS.STR.includes(obj[key2].itemLabel.value.toLowerCase()))) {
+                                    people.add('<' + obj[key2].item.value + '>');
+                                    entities.add('<' + obj[key2].wdc.value + '>');                        
+                                    if (obj[key2].wdc_type && obj[key2].wdc_type.value == "http://www.wikidata.org/entity/Q5") {
+                                        const index = direct_results.findIndex(entry => entry.item === obj[key2].wdc.value); 
+                                        if (index == -1) {
+                                            direct_results.push({
+                                                propLabel: new Set(['description']),
+                                                item: obj[key2].wdc.value,
+                                                image : obj[key2].wdc_image ? obj[key2].wdc_image.value : '',
+                                                str: obj[key2].str.value,
+                                                subj_title: obj[key2].wdc_label.value,
+                                                obj_title: obj[key2].wdc_description.value,
+                                                cnt: 100
+                                            });
+                                        }                                    
                                 }
                                 results[obj[key2].itemLabel.value] = {
                                     propLabel: new Set([obj[key2].propLabel.value]),
