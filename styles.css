@@ -107,11 +107,13 @@
 
 .tooltip-img {    
     position: relative;
-    border: 5px solid yellow;
+    border: 2px solid #1e73be;
+    margin: 2px;
 }
 
 .tooltip-img-direct {    
     position: relative;
-    border: 5px solid green;
+    border: 2px solid green;
+    margin: 2px;
 }
 

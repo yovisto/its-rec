@@ -120,7 +120,8 @@ function showTooltip(event) {
     if (event.target.classList.contains('tooltip-img-direct')) {
         $("#myPopup").append('<span style="display: inline-block; width: 10px; height: 10px; background-color: green;"></span> Person direkt in den Metadaten erwähnt<br>')        
     } else {
-        $("#myPopup").append('<span style="display: inline-block; width: 10px; height: 10px; background-color: yellow;"></span> indirekte Verbindung<br>')        
+        const indirect_subj = event.target.getAttribute('indirect-subj');    
+        $("#myPopup").append('<span style="display: inline-block; width: 10px; height: 10px; background-color: #1e73be;"></span> indirekte Verbindung über "' +  indirect_subj + '" in den Metadaten<br>')        
     }
     const tooltipText = event.target.getAttribute('data-tooltip');
     $("#myPopup").append(tooltipText);
@@ -238,7 +239,7 @@ function search(event) {
                         } else {
                             const title_2 = results[key2].obj_title + ': ' + results[key2].item_description + ' [description]'
                             title = title_2 + '<br>' + title
-                            $('#person_subsec' + key).append('<a href="' + results[key2].item + '" target="_blank"><img class="tooltip-img" src=' + results[key2].image + ' + data-tooltip="' + title + '" height=100 width=75></a>');								                            
+                            $('#person_subsec' + key).append('<a href="' + results[key2].item + '" target="_blank"><img class="tooltip-img" src=' + results[key2].image + ' indirect-subj="' + results[key2].subj_title + '" + data-tooltip="' + title + '" height=100 width=75></a>');								                            
                         }                        
                     }
 
