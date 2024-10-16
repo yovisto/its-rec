@@ -117,6 +117,11 @@ function createGUID() {
 
 function showTooltip(event) {
     $("#myPopup").html("");
+    if (event.target.classList.contains('tooltip-img-direct')) {
+        $("#myPopup").append('<span style="display: inline-block; width: 10px; height: 10px; background-color: green;"></span> Person direkt in den Metadaten erwähnt<br>')        
+    } else {
+        $("#myPopup").append('<span style="display: inline-block; width: 10px; height: 10px; background-color: yellow;"></span> indirekte Verbindung<br>')        
+    }
     const tooltipText = event.target.getAttribute('data-tooltip');
     $("#myPopup").append(tooltipText);
     var popup = document.getElementById("myPopup");
@@ -222,14 +227,13 @@ function search(event) {
                     else {
                         $('#person_subsec' + key).html("");
                     }
-
-                    direct_results
+                    
                     for (const key2 in results) {
                         var title = results[key2].subj_title + ': ' + results[key2].obj_title + ' [' + [...results[key2].propLabel].join(', ') + ']'
                         const index = direct_results.findIndex(item => item.subj_title === results[key2].obj_title); 
                         if (index !== -1) { 
                             title = direct_results[index].subj_title + ': ' + direct_results[index].obj_title + ' [' + [...direct_results[index].propLabel].join(', ') + ']<br>' + title;                            
-                            $('#person_subsec' + key).prepend('<a href="' + results[key2].item + '" target="_blank"><img class="tooltip-img" src=' + results[key2].image + ' + data-tooltip="' + title + '" height=100 width=75></a>');								
+                            $('#person_subsec' + key).prepend('<a href="' + results[key2].item + '" target="_blank"><img class="tooltip-img-direct" src=' + results[key2].image + ' + data-tooltip="' + title + '" height=100 width=75></a>');								
                             direct_results.splice(index, 1);
                         } else {
                             const title_2 = results[key2].obj_title + ': ' + results[key2].item_description + ' [description]'
@@ -240,10 +244,10 @@ function search(event) {
 
                     direct_results.forEach(result => {
                         const direct_title = result.subj_title + ': ' + result.obj_title + ' [' + [...result.propLabel].join(', ') + ']'
-                        $('#person_subsec' + key).prepend('<a href="' + result.item + '" target="_blank"><img class="tooltip-img" src=' + result.image + ' + data-tooltip="' + direct_title + '" height=100 width=75></a>');								
+                        $('#person_subsec' + key).prepend('<a href="' + result.item + '" target="_blank"><img class="tooltip-img-direct" src=' + result.image + ' + data-tooltip="' + direct_title + '" height=100 width=75></a>');								
                     });                    
 
-                    const images = document.querySelectorAll('.tooltip-img');
+                    const images = document.querySelectorAll('.tooltip-img, .tooltip-img-direct');
                     images.forEach(image => {
                         image.addEventListener('mouseenter', showTooltip);                        
                         image.addEventListener('mouseleave', hide);

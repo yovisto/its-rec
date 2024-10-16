@@ -79,7 +79,7 @@
 }
 
 .accordion {
-    width: 80%;        
+    width: 60%;        
     text-align: left;
     padding-bottom:1em;
 }
@@ -107,4 +107,11 @@
 
 .tooltip-img {    
     position: relative;
+    border: 5px solid yellow;
 }
+
+.tooltip-img-direct {    
+    position: relative;
+    border: 5px solid green;
+}
+
