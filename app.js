@@ -263,7 +263,8 @@ function search(event) {
                     if (Object.keys(results).length > 0) {
                         const all_entities = Array.from(people).concat(Array.from(entities));
                         const map_query = QUERIES.QUERY_MAP.replaceAll('XXNEEDLEXX', all_entities.join(' '));
-                        const views_html = PERSON_VIEWS.replaceAll('__ID__', key).replace('__MAPHREF__', map_query);
+                        const timeline_query = QUERIES.QUERY_TIMELINE.replaceAll('XXNEEDLEXX', all_entities.join(' '));
+                        const views_html = PERSON_VIEWS.replaceAll('__ID__', key).replace('__MAPHREF__', map_query).replace('__TIMELINEHREF__', timeline_query);                        
                         $('#person_subsec' + key).append(views_html);
                     }
                                                             
