@@ -264,7 +264,8 @@ function search(event) {
                         const all_entities = Array.from(people).concat(Array.from(entities));
                         const map_query = QUERIES.QUERY_MAP.replaceAll('XXNEEDLEXX', all_entities.join(' '));
                         const timeline_query = QUERIES.QUERY_TIMELINE.replaceAll('XXNEEDLEXX', all_entities.join(' '));
-                        const views_html = PERSON_VIEWS.replaceAll('__ID__', key).replace('__MAPHREF__', map_query).replace('__TIMELINEHREF__', timeline_query);                        
+                        const graph_query = QUERIES.QUERY_GRAPH.replaceAll('XXNEEDLEXX', all_entities.join(' '));
+                        const views_html = PERSON_VIEWS.replaceAll('__ID__', key).replace('__MAPHREF__', map_query).replace('__TIMELINEHREF__', timeline_query).replace('__GRAPHHREF__', graph_query);
                         $('#person_subsec' + key).append(views_html);
                     }
                                                             
