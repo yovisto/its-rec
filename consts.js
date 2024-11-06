@@ -48,11 +48,3 @@ export const SUB_SECTION = `
         </div>        
 </div>
 `
-
-export const PERSON_VIEWS = `
-    <div>
-        <a style='font-size: 20px;' id='view_graph__ID__' class='clickable' title='grafische Ansicht der verwandten Personen' href='__GRAPHHREF__' target='_blank'><span>&#x1F578;</span></a>
-        <a style='font-size: 20px;' id='view_timeline__ID__' class='clickable' title='Zeitleistenansicht der verwandten Personen' href='__TIMELINEHREF__' target='_blank'><span>&#x1F4C5;</span></a>
-        <a style='font-size: 20px;' id='view_map__ID__' class='clickable' title='Kartenansicht der verwandten Personen' href='__MAPHREF__' target='_blank'><span>&#x1F310;</span></a>
-    </div>
-`

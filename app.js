@@ -1,4 +1,4 @@
-import { BLACK_LISTS, PERSON_VIEWS, QUERIES, SUB_SECTION, TOOLTIPS } from './consts.js';
+import { BLACK_LISTS, QUERIES, SUB_SECTION, TOOLTIPS } from './consts.js';
 
 
 function show(event) {
@@ -133,6 +133,25 @@ function showTooltip(event) {
     popup.style.top = `${event.pageY - 180}px`;
 }
 
+function showFrame(event) {
+    const this_key = event.target.attributes['id'].value.replace('span_graph', '').replace('span_timeline', '').replace('span_map', '');
+    const url = event.target.attributes['data-url'].value;        
+    $(`#iframe_container${this_key}`).html("");
+    $(`#iframe_container${this_key}`).append(`<iframe src='${url}'></iframe>`);
+    $(`#iframe_container${this_key}`).addClass("show");
+    $(`#iframe_container${this_key}`).css({
+        "width": "100%",
+        "height": "100%"
+    });
+}
+
+function expandDesc(event) {
+    const desc = event.target.attributes['data-text'].value;
+    const this_key =  event.target.attributes['id'].value.replace('expand_desc', '');
+    $(`#desc${this_key}`).html("");
+    $(`#desc${this_key}`).html(desc);
+}
+
 function search(event) {
     var search_val = document.getElementById("query").value;
     var input_url = event.currentTarget.attributes["data-url"];
@@ -157,7 +176,10 @@ function search(event) {
             var value = obj[key];
             var desc = removeHtml(value.lab.value);
             var len = 400;
-            var trimmedDesc = desc.length > len ? desc.substring(0, len - 3) + "..." : desc;
+            var trimmedDesc = desc;            
+            if (desc.length > len) {                
+                trimmedDesc = desc.substring(0, len - 3) + `<a style='cursor: pointer;' id='expand_desc${key}' data-text='${desc}'>...</a>`;                                
+            }    
             if (document.getElementById('curriculum').checked) {
                 trimmedDesc = "";
             }
@@ -165,8 +187,10 @@ function search(event) {
             var wlolink = getWloLink(value.s.value);
             var title = value.title != null ? value.title.value : desc;
 
-            $('#stage').append('<div id="head_' + key + '><a data-url="' + value.s.value + '"><b>' + title + '</b></a> [<a target="_blank" href="' + value.s.value + '" title="' + TOOLTIPS.KG + '">KG</a>] ' + wlolink + ' <p>' + trimmedDesc + '</p> <div id="content_' + key + '"></div></div>\n');
-        
+            $('#stage').append('<div id="head_' + key + '><a data-url="' + value.s.value + '"><b>' + title + '</b></a> [<a target="_blank" href="' + value.s.value + '" title="' + TOOLTIPS.KG + '">KG</a>] ' + wlolink + ` <p id='desc${key}'>` + trimmedDesc + '</p> <div id="content_' + key + '"></div></div>\n');
+            if (desc.length > len && trimmedDesc != "") {                             
+                $('#expand_desc' + key).click(expandDesc);
+            }
             var this_sub_sec = SUB_SECTION.replaceAll('__ID__', key);
             $('#stage').append(this_sub_sec);
             addAccordionEventHandlers(key)
@@ -264,10 +288,20 @@ function search(event) {
                         const all_entities = Array.from(people).concat(Array.from(entities));
                         const map_query = QUERIES.QUERY_MAP.replaceAll('XXNEEDLEXX', all_entities.join(' '));
                         const timeline_query = QUERIES.QUERY_TIMELINE.replaceAll('XXNEEDLEXX', all_entities.join(' '));
-                        const graph_query = QUERIES.QUERY_GRAPH.replaceAll('XXNEEDLEXX', all_entities.join(' '));
-                        const views_html = PERSON_VIEWS.replaceAll('__ID__', key).replace('__MAPHREF__', map_query).replace('__TIMELINEHREF__', timeline_query).replace('__GRAPHHREF__', graph_query);
-                        $('#person_subsec' + key).append(views_html);
-                    }
+                        const graph_query = QUERIES.QUERY_GRAPH.replaceAll('XXNEEDLEXX', all_entities.join(' '));                        
+                        const persons_html = `
+                        <div>
+                            <a style='font-size: 20px;' id='view_graph${key}' class='clickable' title='grafische Ansicht der verwandten Personen'><span id='span_graph${key}' data-url='${graph_query}'>&#x1F578;</span></a>
+                            <a style='font-size: 20px;' id='view_timeline${key}' class='clickable' title='Zeitleistenansicht der verwandten Personen'><span id='span_timeline${key}' data-url='${timeline_query}'>&#x1F4C5;</span></a>
+                            <a style='font-size: 20px;' id='view_map${key}' class='clickable' title='Kartenansicht der verwandten Personen'><span id='span_map${key}' data-url='${map_query}'>&#x1F310;</span></a>        
+                        <div>
+                        <div id='iframe_container${key}'></div>
+                        `
+                        $('#person_subsec' + key).append(persons_html);
+                        $('#view_graph' + key).click(showFrame);
+                        $('#view_timeline' + key).click(showFrame);
+                        $('#view_map' + key).click(showFrame);
+                    }               
                                                             
             });            
             
