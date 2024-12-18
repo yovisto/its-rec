@@ -5,8 +5,10 @@ function show(event) {
 
     var url = event.currentTarget.attributes["data-url"].value;
     var rec = event.currentTarget.attributes["data-rec"].value;
-    var verified_words = event.currentTarget.attributes["data-words"].value;
-
+    var verified_words = event.currentTarget.attributes["data-words"].value.split(',');
+    verified_words = verified_words.map(x => x.replace("http://de.dbpedia.org/resource/", ""));
+    verified_words = verified_words.filter(Boolean);
+    
     $("#myPopup").html("Laden ... ");
     $.getJSON(QUERIES.QUERY_3.replaceAll("XXNEEDLEXX", url).replaceAll("YYNEEDLEYY", rec), function (jd) {
         var obj = jd.results.bindings;
@@ -31,6 +33,15 @@ function show(event) {
             categories.add(cat);
         }
 
+        
+        if (verified_words.length > 0) {
+            $("#myPopup").append("<div><b>Doppelt verifizierte Gemeinsamkeiten mit WordNet:</b><div>")
+            for (var word of verified_words) {
+                $("#myPopup").append(word + "<br>\n");
+            }
+            
+        }
+
         if (direct.size > 0) {
             $("#myPopup").append("<div><b>Direkte Gemeinsamkeiten:</b><div>")
             for (var item of direct) {
@@ -51,12 +62,7 @@ function show(event) {
                 $("#myPopup").append(item[0] + " u. " + item[2] + " (" + item[1] + ")<br>\n");
             }
         }
-        
-        var verified_words_list = verified_words.split(',').filter(Boolean);
-        if (verified_words_list.length > 0) {
-            $("#myPopup").append("<div><b>Verifizierte überlappende Konzepte:</b><div>")
-            $("#myPopup").append(verified_words_list.join(', ') + "<br>\n");
-        }
+                
     });
 
     console.log("show " + rec + " " + url);
@@ -197,10 +203,10 @@ function search(event) {
             $('#person_subsec' + key).html("Laden ...")
             $("#rec_subsec" + key).html("Laden ... ");
 
-            q = QUERIES.QUERY_6.replaceAll("XXNEEDLEXX", value.s.value);					            
+            q = QUERIES.QUERY_6_KEA_SPOTLIGHT.replaceAll("XXNEEDLEXX", value.s.value);					            
             $.getJSON(q, function (jd2, s, r) {                    
                     var obj = jd2.results.bindings;
-                    var results = {};
+                    var results = {};           
                     var direct_results = [];
                     const entities = new Set();
                     const people = new Set();                    
@@ -309,7 +315,7 @@ function search(event) {
             console.log("retrieving recommendations for " + url);                        
             const results = [];
 
-            $.getJSON(QUERIES.QUERY_2.replaceAll("XXNEEDLEXX", url), function (jd2, s, r) {
+            $.getJSON(QUERIES.QUERY_2_KEA_SPOTLIGHT.replaceAll("XXNEEDLEXX", url), function (jd2, s, r) {
                 var obj = jd2.results.bindings;                
                 for (var key2 in obj) {
                     var value = obj[key2];                    
@@ -325,23 +331,24 @@ function search(event) {
                     }
                 };
 
-                $.getJSON(QUERIES.QUERY_5.replaceAll("XXNEEDLEXX", url), function (jd3, s1, r1) {
+                $.getJSON(QUERIES.QUERY_5_KEA_SPOTLIGHT_WN.replaceAll("XXNEEDLEXX", url), function (jd3, s1, r1) {
                     var obj3 = jd3.results.bindings;
                     console.log(obj3);
                     console.log(obj);
                     for (var key3 in obj3) {
                         var value3 = obj3[key3];
-                        ext_objs = results.filter(result => result.rec == value3.coref.value);
+                        var ext_objs = results.filter(result => result.rec == value3.doc.value);
                         if (ext_objs.length > 0) {
-                            ext_objs[0].verified_words.push(value3.surface.value)
+                            ext_objs[0].verified_words.push(value3.e.value)
                         }
                         else {
+                            rec = value3.doc.value
                             results.push({
-                                id: key + "_" + key3,
-                                rec: value3.coref.value,
+                                id: "wn_" + key + "_" + key3,
+                                rec: rec,
                                 cnt: value3.cnt.value,
-                                title: value3.name2.value,
-                                verified_words: [value3.surface.value]
+                                title: value3.finalTitle ? value3.finalTitle.value : rec,
+                                verified_words: [value3.e.value]
                             });
                         }
                     };
