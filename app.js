@@ -6,11 +6,11 @@ function show(event) {
     var url = event.currentTarget.attributes["data-url"].value;
     var rec = event.currentTarget.attributes["data-rec"].value;
     var verified_words = event.currentTarget.attributes["data-words"].value.split(',');
-    verified_words = verified_words.map(x => x.replace("http://de.dbpedia.org/resource/", ""));
+    verified_words = verified_words.map(x => x.replace("http://de.dbpedia.org/resource/", "").replaceAll("_", " "));
     verified_words = verified_words.filter(Boolean);
-    
+
     $("#myPopup").html("Laden ... ");
-    $.getJSON(QUERIES.QUERY_3.replaceAll("XXNEEDLEXX", url).replaceAll("YYNEEDLEYY", rec), function (jd) {
+    $.getJSON(QUERIES.QUERY_3_KEA_SPOTLIGHT.replaceAll("XXNEEDLEXX", url).replaceAll("YYNEEDLEYY", rec), function (jd) {
         var obj = jd.results.bindings;
 
         $("#myPopup").html("<p>Dieses Dokument wird empfohlen, weil es ähnliche Entitäten und Kategorien enthält. <p>");
@@ -21,9 +21,9 @@ function show(event) {
 
         for (var key in obj) {
             var value = obj[key];
-            var doc = value.doc.value.replace("http://de.dbpedia.org/resource/", "");
-            var cat = value.cat.value.replace("http://de.dbpedia.org/resource/", "");
-            var rec = value.recommendation.value.replace("http://de.dbpedia.org/resource/", "");
+            var doc = value.doc.value.replace("http://de.dbpedia.org/resource/", "").replaceAll("_", " ");
+            var cat = value.cat.value.replace("http://de.dbpedia.org/resource/", "").replaceAll("_", " ");
+            var rec = value.recommendation.value.replace("http://de.dbpedia.org/resource/", "").replaceAll("_", " ");
 
             if (doc == rec) {
                 direct.add(doc);
@@ -210,10 +210,11 @@ function search(event) {
                     var direct_results = [];
                     const entities = new Set();
                     const people = new Set();                    
-                    for (var key2 in obj) {                        
+                    for (var key2 in obj) {                      
+                        var str = obj[key2].str.value.replace("http://de.dbpedia.org/resource/", "").replaceAll("_", " ");
                         if (obj[key2].itemLabel.value in results) {                            
                             if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value.toLowerCase())) && 
-                                (!BLACK_LISTS.STR.includes(obj[key2].str.value.toLowerCase())) &&
+                                (!BLACK_LISTS.STR.includes(str.toLowerCase())) &&
                                 (!BLACK_LISTS.STR.includes(obj[key2].wdc_label.value.toLowerCase())) && 
                                 (!BLACK_LISTS.STR.includes(obj[key2].itemLabel.value.toLowerCase()))) {
                                     results[obj[key2].itemLabel.value].propLabel.add(obj[key2].propLabel.value);										                                
@@ -222,7 +223,7 @@ function search(event) {
                         }
                         else {
                             if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value.toLowerCase())) && 
-                                (!BLACK_LISTS.STR.includes(obj[key2].str.value.toLowerCase())) &&
+                                (!BLACK_LISTS.STR.includes(str.toLowerCase())) &&
                                 (!BLACK_LISTS.STR.includes(obj[key2].wdc_label.value.toLowerCase())) && 
                                 (!BLACK_LISTS.STR.includes(obj[key2].itemLabel.value.toLowerCase()))) {
                                     people.add('<' + obj[key2].item.value + '>');
@@ -234,7 +235,7 @@ function search(event) {
                                                 propLabel: new Set(['description']),
                                                 item: obj[key2].wdc.value,
                                                 image : obj[key2].wdc_image ? obj[key2].wdc_image.value : '',
-                                                str: obj[key2].str.value,
+                                                str: str,
                                                 subj_title: obj[key2].wdc_label.value,
                                                 obj_title: obj[key2].wdc_description.value,
                                                 cnt: 100
@@ -246,7 +247,7 @@ function search(event) {
                                     image: obj[key2].image.value,
                                     item: obj[key2].item.value,
                                     item_description: obj[key2].item_description.value,
-                                    str: obj[key2].str.value,
+                                    str: str,
                                     subj_title: obj[key2].wdc_label.value,
                                     obj_title: obj[key2].itemLabel.value,
                                     cnt: 0
