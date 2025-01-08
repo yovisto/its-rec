@@ -205,13 +205,13 @@ function search(event) {
 
             q = QUERIES.QUERY_6_KEA_SPOTLIGHT.replaceAll("XXNEEDLEXX", value.s.value);					            
             $.getJSON(q, function (jd2, s, r) {                    
-                    var obj = jd2.results.bindings;
+                    const obj = jd2.results.bindings;
                     var results = {};           
-                    var direct_results = [];
+                    const direct_results = [];
                     const entities = new Set();
                     const people = new Set();                    
-                    for (var key2 in obj) {                      
-                        var str = obj[key2].str.value.replace("http://de.dbpedia.org/resource/", "").replaceAll("_", " ");
+                    for (let key2 in obj) {                      
+                        const str = obj[key2].str.value.replace("http://de.dbpedia.org/resource/", "").replaceAll("_", " ");
                         if (obj[key2].itemLabel.value in results) {                            
                             if ((!BLACK_LISTS.REL.includes(obj[key2].propLabel.value.toLowerCase())) && 
                                 (!BLACK_LISTS.STR.includes(str.toLowerCase())) &&
@@ -266,7 +266,7 @@ function search(event) {
                         $('#person_subsec' + key).html("");
                     }
                     
-                    for (const key2 in results) {
+                    for (let key2 in results) {
                         var title = results[key2].subj_title + ': ' + results[key2].obj_title + ' [' + [...results[key2].propLabel].join(', ') + ']'
                         const index = direct_results.findIndex(item => item.subj_title === results[key2].obj_title); 
                         if (index !== -1) { 
@@ -312,18 +312,20 @@ function search(event) {
                                                             
             });            
             
-            var url= value.s.value;
+            const url= value.s.value;
             console.log("retrieving recommendations for " + url);                        
-            const results = [];
+            
 
             $.getJSON(QUERIES.QUERY_2_KEA_SPOTLIGHT.replaceAll("XXNEEDLEXX", url), function (jd2, s, r) {
-                var obj = jd2.results.bindings;                
-                for (var key2 in obj) {
-                    var value = obj[key2];                    
-                    var rec = value.doc.value;
+                const results = [];
+                const obj = jd2.results.bindings;                
+                for (let key2 in obj) {
+                    const value = obj[key2];                    
+                    const rec = value.doc.value;
                     if (rec != url) {
-                        results.push({
-                            id: key + "_" + key2,
+                        const guid_lev2 = createGUID();
+                        results.push({                            
+                            id: guid_lev2,
                             rec: rec,
                             cnt: value.cnt.value,
                             title: value.finalTitle ? value.finalTitle.value : rec,
@@ -333,19 +335,20 @@ function search(event) {
                 };
 
                 $.getJSON(QUERIES.QUERY_5_KEA_SPOTLIGHT_WN.replaceAll("XXNEEDLEXX", url), function (jd3, s1, r1) {
-                    var obj3 = jd3.results.bindings;
+                    const obj3 = jd3.results.bindings;
                     console.log(obj3);
                     console.log(obj);
-                    for (var key3 in obj3) {
-                        var value3 = obj3[key3];
-                        var ext_objs = results.filter(result => result.rec == value3.doc.value);
+                    for (let key3 in obj3) {
+                        const value3 = obj3[key3];
+                        const ext_objs = results.filter(result => result.rec == value3.doc.value);
                         if (ext_objs.length > 0) {
                             ext_objs[0].verified_words.push(value3.e.value)
                         }
                         else {
-                            rec = value3.doc.value
-                            results.push({
-                                id: "wn_" + key + "_" + key3,
+                            const rec = value3.doc.value
+                            const guid_lev3 = createGUID();
+                            results.push({                                
+                                id: guid_lev3,
                                 rec: rec,
                                 cnt: value3.cnt.value,
                                 title: value3.finalTitle ? value3.finalTitle.value : rec,
