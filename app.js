@@ -192,8 +192,9 @@ function search(event) {
 
             var wlolink = getWloLink(value.s.value);
             var title = value.title != null ? value.title.value : desc;
-
-            $('#stage').append('<div id="head_' + key + '><a data-url="' + value.s.value + '"><b>' + title + '</b></a> [<a target="_blank" href="' + value.s.value + '" title="' + TOOLTIPS.KG + '">KG</a>] ' + wlolink + ` <p id='desc${key}'>` + trimmedDesc + '</p> <div id="content_' + key + '"></div></div>\n');
+            var uri = value.uri != null ? value.uri.value : value.s.value
+            
+            $('#stage').append(`<div id="head_${key}"><a href="${uri}" data-url="${value.s.value}"><b>${title}</b></a> [<a target="_blank" href="${value.s.value}" title="${TOOLTIPS.KG}">KG</a>] ${wlolink} <p id='desc${key}'> ${trimmedDesc}</p> <div id="content_${key}"></div></div>\n`);
             if (desc.length > len && trimmedDesc != "") {                             
                 $('#expand_desc' + key).click(expandDesc);
             }
