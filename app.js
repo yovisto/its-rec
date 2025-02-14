@@ -1,6 +1,5 @@
 import { BLACK_LISTS, QUERIES, SUB_SECTION, TOOLTIPS } from './consts.js';
 
-
 function show(event) {
 
     var url = event.currentTarget.attributes["data-url"].value;
@@ -159,8 +158,11 @@ function expandDesc(event) {
 }
 
 function search(event) {
-    var search_val = document.getElementById("query").value;
-    var input_url = event.currentTarget.attributes["data-url"];
+    const search_val = document.getElementById("query").value;
+    const input_url = event ? event.currentTarget.attributes["data-url"] : null;
+    const url = new URL(window.location.href);                        
+    url.searchParams.set('search', search_val);                
+    window.history.pushState({}, '', url);
 
     console.log("Searching " + search_val);
     $('#stage').html("Suchen ...");
@@ -190,9 +192,9 @@ function search(event) {
                 trimmedDesc = "";
             }
 
-            var wlolink = getWloLink(value.s.value);
-            var title = value.title != null ? value.title.value : desc;
-            var uri = value.uri != null ? value.uri.value : value.s.value
+            const wlolink = getWloLink(value.s.value);
+            const title = value.title != null ? value.title.value : desc;
+            const uri = value.uri != null ? value.uri.value : value.s.value
             
             $('#stage').append(`<div id="head_${key}"><a href="${uri}" data-url="${value.s.value}"><b>${title}</b></a> [<a target="_blank" href="${value.s.value}" title="${TOOLTIPS.KG}">KG</a>] ${wlolink} <p id='desc${key}'> ${trimmedDesc}</p> <div id="content_${key}"></div></div>\n`);
             if (desc.length > len && trimmedDesc != "") {                             
@@ -268,7 +270,7 @@ function search(event) {
                     }
                     
                     for (let key2 in results) {
-                        var title = results[key2].subj_title + ': ' + results[key2].obj_title + ' [' + [...results[key2].propLabel].join(', ') + ']'
+                        let title = results[key2].subj_title + ': ' + results[key2].obj_title + ' [' + [...results[key2].propLabel].join(', ') + ']'
                         const index = direct_results.findIndex(item => item.subj_title === results[key2].obj_title); 
                         if (index !== -1) { 
                             title = direct_results[index].subj_title + ': ' + direct_results[index].obj_title + ' [' + [...direct_results[index].propLabel].join(', ') + ']<br>' + title;                            
@@ -390,4 +392,24 @@ function search(event) {
 document.addEventListener('DOMContentLoaded', function() {    
     document.getElementById('searchButton').addEventListener('click', search);
     document.getElementById('overlay').addEventListener('click', hide);
+});
+
+$(document).ready(function() {    
+    var queryString = window.location.search;
+    if (queryString) {        
+        var params = queryString.substring(1).split('&');
+        var queryParams = {};        
+        params.forEach(function(param) {
+            var pair = param.split('=');
+            queryParams[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+        });        
+        console.log(queryParams);                
+        if ('search' in queryParams) {
+            var inputElement = document.getElementById('query');
+            inputElement.value = queryParams['search'];
+            search();
+        }
+    } else {
+        console.log('No query parameters found.');
+    }
 });
