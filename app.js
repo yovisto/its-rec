@@ -174,7 +174,7 @@ function search(event) {
     q = q.replaceAll("XXNEEDLEXX", search_val);
 
     if (input_url) {
-        q = QUERIES.QUERY_7.replace("XXNEEDLEXX", input_url.value)
+        q = QUERIES.QUERY_7.replaceAll("XXNEEDLEXX", input_url.value)
     }
 
     $.getJSON(q, function (jd) {
